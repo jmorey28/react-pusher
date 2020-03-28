@@ -15,7 +15,7 @@ const pusher = new Pusher({
     cluster: 'APP_CLUSTER',
     encrypted: true
 });
-app.set('PORT', process.env.PORT || 5000);
+app.set('PORT', process.env.PORT || 8080);
 
 app.post('/message', (req, res) => {
     const payload = req.body;
