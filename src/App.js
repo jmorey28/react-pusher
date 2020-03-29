@@ -1,5 +1,6 @@
 import React from 'react';
 import ChatRoom from './components/ChatRoom'
+import LoginModal from './components/LoginModal'
 import Pusher from 'pusher-js'
 import axios from 'axios';
 
@@ -9,25 +10,31 @@ class App extends React.Component {
   constructor(){
     super()
     this.state = {
+      loginVisible: true,
       messages: [],
-      messageInput: ''
+      messageInput: '',
+      username: ''
     }
   }
   componentDidMount(){
-    var pusher = new Pusher('APP_KEY', {
-      cluster: 'APP_CLUSTER',
+    var pusher = new Pusher('4aece57e5162943ac969', {
+      cluster: 'us2',
       forceTLS: true
     });
 
     var channel = pusher.subscribe('chat');
-    channel.bind('message', function(data) {
-      alert(JSON.stringify(data));
+    channel.bind('message', (message) => {
+      this.setState({messages: [...this.state.messages, message]})
     });
   }
   render(){
-    const {messages, messageInput} = this.state
+    const {loginVisible, messages, messageInput, username} = this.state
     return (
       <div className="App">
+        {loginVisible && 
+        <LoginModal handleLogin={this.handleLogin}
+                    handleUserNameChange={this.handleUserNameChange}
+                    username={username}/>}
         <ChatRoom handleMessageInputChange={this.handleMessageInputChange}
                   handleMessageInputKeyPress={this.handleMessageInputKeyPress}
                   messageInput={messageInput}
@@ -43,10 +50,19 @@ class App extends React.Component {
     if(key === 'Enter' || key === 13){
        event.preventDefault()
        const payload = {
-         message: this.state.messageInput
+        author: this.state.username,
+        body: this.state.messageInput
        }
        axios.post('http://localhost:8080/message', payload)
+       this.setState({messageInput: ''})
     } 
+  }
+  handleLogin = (event) => {
+    event.preventDefault()
+    this.setState({loginVisible: false})
+  }
+  handleUserNameChange = (event) => {
+    this.setState({username: event.target.value})
   }
 }
 

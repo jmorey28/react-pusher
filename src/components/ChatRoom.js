@@ -24,12 +24,12 @@ export default class ChatRoom extends React.Component {
             </div>
         )
     }
-    renderMessage(message){
-        const {author, contents} = message
+    renderMessage(message, index){
+        const {author, body} = message
         return (
-            <div className='chat-message'>
+            <div key={index} className='chat-message'>
                 <span className='chat-message-author'>{author}</span>
-                <p className='chat-message-contents'>{contents}</p>
+                <p className='chat-message-body'>{body}</p>
             </div>
         )
     }
