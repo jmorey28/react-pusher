@@ -15,7 +15,7 @@ class App extends React.Component {
   }
   componentDidMount(){
     const pusher = new Pusher('APP_KEY', {
-      cluster: 'us2',
+      cluster: 'APP_CLUSTER',
       forceTLS: true
     });
   
