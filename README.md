@@ -5,6 +5,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 This project requires a Pusher channel to run. 
 1. Head over to https://pusher.com/ to setup an account and a Pusher channel.
 2. Add the generated app keys to this application in server.js and App.js.
+3. Run npm start, open up two separate browser windows and start messaging  :tada: :tada:
 
 You can find my full tutorial here:
 http://jackmorey.com/real-time-chat-room-with-react-php-pusher/
