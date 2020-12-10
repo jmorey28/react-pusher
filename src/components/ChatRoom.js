@@ -1,30 +1,26 @@
-import React from 'react'
+import React, {useState} from 'react'
+import axios from 'axios';
 import PropTypes from 'prop-types'
 import './ChatRoom.css'
 
-export default class ChatRoom extends React.Component {
-    render (){
-        const { 
-            handleMessageInputChange, 
-            handleMessageInputKeyPress, 
-            messages,
-            messageInput } = this.props
-        return (
-            <div className='chat-room-wrapper'>
-                <div className='chat-room-messages'>
-                    {messages.map(this.renderMessage)}
-                </div>
-                <div className='chat-room-message-input-wrapper'>
-                    <textarea className='chat-room-message-input'
-                            onChange={handleMessageInputChange}
-                            onKeyPress={handleMessageInputKeyPress}
-                            placeholder="Message" 
-                            value={messageInput} />
-                </div>
+export default function ChatRoom(props){
+    const { messages, username } = props
+    const [messageInput, setMessageInput] = useState('');
+    return (
+        <div className='chat-room-wrapper'>
+            <div className='chat-room-messages'>
+                {messages.map(renderMessage)}
             </div>
-        )
-    }
-    renderMessage(message, index){
+            <div className='chat-room-message-input-wrapper'>
+                <textarea className='chat-room-message-input'
+                        onChange={handleMessageInputChange}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Message" 
+                        value={messageInput} />
+            </div>
+        </div>
+    )
+    function renderMessage(message, index){
         const {author, body} = message
         return (
             <div key={index} className='chat-message'>
@@ -33,17 +29,28 @@ export default class ChatRoom extends React.Component {
             </div>
         )
     }
+    function handleMessageInputChange(event){
+        setMessageInput(event.target.value)
+    }
+    function handleKeyPress(event){
+        const key = event.key || event.keyCode
+        if(key === 'Enter' || key === 13){
+            event.preventDefault()
+            const payload = {
+                author: username,
+                body: messageInput
+            }
+            axios.post('/message', payload)
+            setMessageInput('')
+        }
+    }
 }
 
 ChatRoom.propTypes = {
-    handleMessageInputChange: PropTypes.func,
-    handleMessageInputKeyPress: PropTypes.func,
     messages: PropTypes.array,
-    messageInput: PropTypes.string
+    username: PropTypes.string
 }
 
 ChatRoom.defaultProps = {
-    handleMessageInputChange: () => {},
-    handleMessageInputKeyPress: () => {},
     messages: []
 }

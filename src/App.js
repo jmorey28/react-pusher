@@ -1,9 +1,7 @@
-import React from 'react';
+import React from 'react'
+import Pusher from 'pusher-js'
 import ChatRoom from './components/ChatRoom'
 import LoginModal from './components/LoginModal'
-import Pusher from 'pusher-js'
-import axios from 'axios';
-
 import './App.css';
 
 class App extends React.Component {
@@ -12,50 +10,32 @@ class App extends React.Component {
     this.state = {
       loginVisible: true,
       messages: [],
-      messageInput: '',
       username: ''
     }
   }
   componentDidMount(){
-    var pusher = new Pusher('4aece57e5162943ac969', {
+    const pusher = new Pusher('APP_KEY', {
       cluster: 'us2',
       forceTLS: true
     });
-
-    var channel = pusher.subscribe('chat');
+  
+    const channel = pusher.subscribe('chat');
     channel.bind('message', (message) => {
       this.setState({messages: [...this.state.messages, message]})
     });
   }
   render(){
-    const {loginVisible, messages, messageInput, username} = this.state
+    const {loginVisible, messages, username} = this.state
     return (
       <div className="App">
         {loginVisible && 
         <LoginModal handleLogin={this.handleLogin}
                     handleUserNameChange={this.handleUserNameChange}
                     username={username}/>}
-        <ChatRoom handleMessageInputChange={this.handleMessageInputChange}
-                  handleMessageInputKeyPress={this.handleMessageInputKeyPress}
-                  messageInput={messageInput}
-                  messages={messages}/>
+        <ChatRoom messages={messages}
+                  username={username}/>
       </div>
     );
-  }
-  handleMessageInputChange = (event) => {
-    this.setState({messageInput: event.target.value})
-  }
-  handleMessageInputKeyPress = (event) => {
-    const key = event.key || event.keyCode
-    if(key === 'Enter' || key === 13){
-       event.preventDefault()
-       const payload = {
-        author: this.state.username,
-        body: this.state.messageInput
-       }
-       axios.post('http://localhost:8080/message', payload)
-       this.setState({messageInput: ''})
-    } 
   }
   handleLogin = (event) => {
     event.preventDefault()
